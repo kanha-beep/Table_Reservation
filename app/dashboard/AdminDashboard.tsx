@@ -150,16 +150,17 @@ export default function AdminDashboard({
               {tableList.map((table) => <div key={table.id} className="border border-sand bg-white p-3"><div className="flex items-center justify-between"><b className="font-display text-lg">{table.name}</b><span className={`rounded-full px-2 py-1 text-[9px] font-bold ${table.status === "Vacant" ? "bg-sage/25 text-moss" : table.status === "Reserved" ? "bg-terracotta/15 text-terracotta" : "bg-ink text-white"}`}>{table.status}</span></div><p className="mt-2 text-[11px] text-zinc-500">{table.capacity} seats · {table.detail}</p></div>)}
             </div>
             <div className="mt-6 overflow-hidden bg-white shadow-soft sm:mt-8">
-              <div className="hidden grid-cols-[1fr_auto_auto] gap-4 border-b border-zinc-100 px-6 py-4 text-[10px] font-bold tracking-widest text-zinc-400 sm:grid">
+              <div className="hidden grid-cols-[1fr_auto_auto_auto] gap-4 border-b border-zinc-100 px-6 py-4 text-[10px] font-bold tracking-widest text-zinc-400 sm:grid">
                 <span>GUEST</span>
                 <span>PARTY</span>
+                <span>DATE</span>
                 <span>TIME</span>
               </div>
               {reservationsList.length ? (
                 reservationsList.map((r) => (
                   <div
                     key={r.id}
-                    className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-zinc-100 px-4 py-4 last:border-0 sm:grid sm:grid-cols-[1fr_auto_auto] sm:px-6 sm:py-5"
+                    className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-zinc-100 px-4 py-4 last:border-0 sm:grid sm:grid-cols-[1fr_auto_auto_auto] sm:px-6 sm:py-5"
                   >
                     <div className="min-w-[58%]">
                       <p className="font-semibold">{r.name}</p>
@@ -168,6 +169,7 @@ export default function AdminDashboard({
                     <span className="rounded-full bg-cream px-3 py-1 text-xs">
                       {r.guests} guests
                     </span>
+                    <span className="text-xs font-semibold text-zinc-500">{r.date}</span>
                     <div className="flex items-center gap-3"><span className="font-display text-base sm:text-lg">{r.time}</span><span className="rounded-full bg-sage/25 px-2 py-1 text-[10px] font-bold">{r.tableName ?? "Unassigned"}</span><div className="flex gap-2"><button type="button" disabled={deletingReservationId === r.id} onClick={() => { setEditing(r); setEditError(""); }} className="!mt-0 !min-h-0 !bg-transparent !p-0 text-xs !text-moss hover:!text-terracotta">Edit</button><button type="button" disabled={deletingReservationId === r.id} aria-busy={deletingReservationId === r.id} onClick={() => deleteReservation(r)} className="!mt-0 !min-h-0 !bg-transparent !p-0 text-xs !text-terracotta hover:!text-ink">{deletingReservationId === r.id ? <span className="inline-flex items-center gap-1"><span className="h-3 w-3 animate-spin rounded-full border-2 border-terracotta/30 border-t-terracotta" />Deleting...</span> : "Delete"}</button></div></div>
                   </div>
                 ))
