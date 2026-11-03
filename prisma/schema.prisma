@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ReservationStatus {
+  CONFIRMED
+  SEATED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum WaitlistStatus {
+  WAITING
+  NOTIFIED
+  SEATED
+  LEFT
+}
+
+model Customer {
+  id           String        @id @default(cuid())
+  name         String
+  phone        String        @unique
+  email        String?
+  preferences  String?
+  reservations Reservation[]
+  waitlist     WaitlistEntry[]
+  createdAt    DateTime      @default(now())
+}
+
+model DiningTable {
+  id           String        @id @default(cuid())
+  name         String        @unique
+  capacity     Int
+  active       Boolean       @default(true)
+  reservations Reservation[]
+}
+
+model Reservation {
+  id           String            @id @default(cuid())
+  customerId   String
+  customer     Customer          @relation(fields: [customerId], references: [id])
+  tableId      String?
+  table        DiningTable?      @relation(fields: [tableId], references: [id])
+  startTime    DateTime
+  endTime      DateTime
+  guests       Int
+  status       ReservationStatus @default(CONFIRMED)
+  notes        String?
+  token        String            @unique @default(cuid())
+  remindedAt   DateTime?
+  createdAt    DateTime          @default(now())
+
+  @@index([startTime, status])
+  @@index([tableId, startTime, endTime, status])
+}
+
+model WaitlistEntry {
+  id          String         @id @default(cuid())
+  customerId  String
+  customer    Customer       @relation(fields: [customerId], references: [id])
+  guests      Int
+  quotedMins  Int?
+  status      WaitlistStatus @default(WAITING)
+  notifiedAt  DateTime?
+  notes       String?
+  createdAt   DateTime       @default(now())
+
+  @@index([status, createdAt])
+}
